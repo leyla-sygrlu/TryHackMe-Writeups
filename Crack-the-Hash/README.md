@@ -81,6 +81,74 @@ The length and character set of the hash (32 hexadecimal characters) strongly su
 
 The lookup table successfully matched the string, confirming the algorithm as **MD4** and immediately returning the plaintext password.
 
-**Cracked Password:** `Eternity22`
+Cracked Password: Eternity22
 
 ![Hash 5 CrackStation](img/hash5.jpeg)
+
+
+
+## [Task 2] Level 2
+
+### Hash 2.1
+**Hash:** `F09EDCB1FCEFC6DFB23DC3505A882655FF77375ED8AA2D1C13F640FCCC2D0C85`
+
+**Analysis & Exploitation:**
+The 64-character length of this string heavily implied a **SHA-256** hash. To maintain time-efficiency during the assessment, a direct query was made to **CrackStation's** pre-computed lookup tables instead of expending local CPU resources. The database successfully identified the algorithm and matched the plaintext.
+
+Cracked Password: paule
+![Hash 2.1 CrackStation](img/hash2.1.png)
+
+
+### Hash 2.2
+**Hash:** `1DFECA0C002AE40B8619ECF94819CC1B`
+
+**Analysis & Exploitation:**
+While the 32-character hexadecimal format is standard for MD5, the environmental context (Hint: NTLM) pointed toward Microsoft's **NTLM** hashing algorithm. To crack this, John the Ripper was deployed locally with a specific format flag (`--format=nt`) to prevent the engine from misidentifying it as MD5 or MD4. 
+
+```bash
+john --format=nt --wordlist=/usr/share/wordlists/rockyou.txt hash_ntlm.txt
+```
+Cracked Password: n63umy8lkf4i
+![Hash 2.2 John NTLM Analysis](img/hash2.2.png)
+
+
+### Hash 2.3
+**Hash:** `$6$aReallyHardSalt$6WKUTqzq.UQQmrm0p/T7MPpMbGNnzXPMAXi4bJMl9be.cfi3/qxIf.hsGpS41BqMhSrHVXgMpdjS6xeKZAs02.`
+
+**Analysis & Exploitation:**
+The structure of this hash clearly indicated the Modular Crypt Format (MCF). The `$6$` prefix identified it as SHA-512 crypt, while the string between the subsequent dollar signs (`aReallyHardSalt`) represented the cryptographic salt.
+
+Due to hardware constraints preventing local GPU acceleration via Hashcat, and John the Ripper caching limitations, a strategic pivot was made to query Hashes.com. The platform's extensive database had already indexed this specific salted hash.
+
+Cracked Password: waka99
+![Hash 2.3 Hashes.com Analysis](img/hash2.3.png)
+
+
+### Hash 2.4
+**Hash:** `e5d8870e5bdd26602cab8dbe07a942c8669e56d6`
+**Salt:** `tryhackme`
+**Algorithm:** `HMAC-SHA1`
+
+**Analysis & Exploitation:**
+This challenge highlighted a critical limitation in standard cracking tools. While attempting to crack the HMAC-SHA1 hash using John the Ripper, the engine defaulted to treating the target password as the cryptographic Key and the salt as the Message (`password is key`). However, the challenge architecture required the exact opposite: the salt (`tryhackme`) was the Key, and the password was the Message.
+
+To bypass this tool limitation, a custom Python script was developed. The script utilized the native `hmac` and `hashlib` libraries to iterate through the `rockyou.txt` wordlist, correctly applying the salt as the Key and brute-forcing the target hash.
+
+Cracked Password: 481616481616
+**Custom Python Cracker:**
+![Hash 2.4 Python Source Code](img/hash2.4.1.png)
+
+**Execution & Result:**
+![Hash 2.4 Script Execution](img/hash2.4.2.png)
+
+
+
+## Conclusion & Key Takeaways
+
+Completing the "Crack the Hash" room provided a comprehensive, hands-on deep dive into both fundamental and advanced cryptographic hashing mechanisms. Throughout the challenges, several key competencies were demonstrated:
+
+* **Tool Versatility:** Successfully deployed industry-standard local engines like John the Ripper and `hashid`, alongside cloud-based lookup tables (CrackStation, Hashes.com) for time-optimized exploitation.
+* **Cryptographic Adaptability:** Navigated complex hashing structures, including Windows NTLM protocols and salted hashes like SHA-512 crypt (Modular Crypt Format).
+* **Custom Tooling:** Identified a critical algorithmic mapping limitation within John the Ripper regarding HMAC-SHA1 "Salt as Key" processing. This was bypassed by actively developing a custom Python brute-forcing script utilizing the native `hmac` and `hashlib` libraries.
+
+Ultimately, this exercise highlighted the importance of moving beyond automated tool reliance. Understanding the underlying cryptographic architecture is essential for engineering custom solutions when standard methodologies fail.

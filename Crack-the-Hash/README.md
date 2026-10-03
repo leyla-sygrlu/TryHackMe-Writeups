@@ -21,7 +21,7 @@ john --format=raw-md5 --wordlist=/usr/share/wordlists/rockyou.txt hash1.txt
 The hypothesis proved correct, and the engine successfully cracked the hash almost instantaneously.
 
 Cracked Password: easy
-![Hash 1 Analysis](img/hash1.jpg)
+![Hash 1 Analysis](img/hash1.jpeg)
 
 
 ### Hash 2
@@ -40,7 +40,7 @@ No password hashes left to crack (see FAQ)
 The cached password was successfully retrieved.
 
 Cracked Password: password123
-![Hash 2 Analysis](img/hash2.jpg)
+![Hash 2 Analysis](img/hash2.jpeg)
 
 
 ### Hash 3
@@ -52,7 +52,7 @@ The provided hash consisted of 64 hexadecimal characters, which strongly indicat
 The hash was queried against **CrackStation**, an online database utilizing massive pre-computed lookup tables. This approach is highly effective for unsalted, standard cryptographic hashes. The database successfully identified the hash type as SHA-256 and immediately returned the plaintext equivalent.
 
 Cracked Password: letmein
-![Hash 3 CrackStation](img/hash3.jpg)
+![Hash 3 CrackStation](img/hash3.jpeg)
 
 
 ### Hash 4
@@ -69,8 +69,8 @@ john --format=bcrypt --wordlist=/usr/share/wordlists/rockyou.txt hash4.txt
 To optimize the exploitation phase and conserve computational resources, a strategic pivot was made to query external compromised credential databases. The hash was submitted to Hashes.com, which successfully matched the Bcrypt hash against its pre-computed records.
 
 Cracked Password: bleh
-![Hash 4 Local Attempt](img/hash4.1.jpg)
-![Hash 4 Hashes.com](img/hash4.2.jpg)
+![Hash 4 Local Attempt](img/hash4.1.jpeg)
+![Hash 4 Hashes.com](img/hash4.2.jpeg)
 
 
 ### Hash 5
@@ -83,4 +83,4 @@ The lookup table successfully matched the string, confirming the algorithm as **
 
 **Cracked Password:** `Eternity22`
 
-![Hash 5 CrackStation](img/hash5.png)
+![Hash 5 CrackStation](img/hash5.jpeg)
